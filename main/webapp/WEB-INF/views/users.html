@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>My application!</title>
+
+    <meta name="description" content="My first application in Spring MVC">
+    <meta name="author" content="company!">
+
+    <link rel="stylesheet" th:href="@{/resources/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/bootstrap/css/listUsers.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/bootstrap/css/navbar.css}"/>
+    <script th:src="@{/resources/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/resources/bootstrap/js/jquery.min.js}"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div data-th-replace="/include/navbar::navbar"></div>
+
+            <div class="row">
+                <div class="col-md-12 pull-center well">
+                    <form th:action="@{/users}" th:object="${filterUsersDTO}" method="POST"
+                          class="form-inline form">
+                        <div class="form-group">
+                            <select th:name="filter" class="form-control btn btn-default">
+                                <th:block th:if="${filterByUsername}">
+                                    <option th:name="username" value="username" selected="selected">filter by username
+                                    </option>
+                                </th:block>
+                                <th:block th:unless="${filterByUsername}">
+                                    <option th:name="username" value="username">filter by username</option>
+                                </th:block>
+                                <th:block th:if="${filterByEmail}">
+                                    <option th:name="email" value="email" selected="selected">filter by e-mail</option>
+                                </th:block>
+                                <th:block th:unless="${filterByEmail}">
+                                    <option th:name="email" value="email">filter by e-mail</option>
+                                </th:block>
+                            </select>
+                            <div class="input-group custom-search-form">
+                                <input th:name="search" type="text" class="form-control" placeholder="Search..."
+                                       th:value="${initSearch}"/>
+                                <span class="input-group-btn">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <button type="submit" class="btn btn-default">
+                                         Search
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-12">
+                    <th:block th:if="${isSearch}">
+                        <h2>
+                            Search: <b th:text="${search}">Search</b> Filter by: <b th:text="${filter}">Filter</b>
+                        </h2>
+                    </th:block>
+                    <h3>
+                        Number of users: <span th:text="${numberOfUsers}"> ${numberOfUsers} </span>
+                    </h3>
+                    <div class="row well displayProfiles">
+                        <th:block th:each="user, iterStat : ${listUsers}">
+                            <div class="col-sm-4">
+                                <div class="card" th:styleappend="${iterStat.index} >= 3 ? 'margin-top: 15px;' : ''">
+                                    <div class="avatar">
+                                        <a th:href="@{'/user/' + ${user.id}}" th:title="${user.username}"><img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/male3-128.png" alt="" /></a>
+                                    </div>
+                                    <div class="content">
+                                        <a th:href="@{'/user/' + ${user.id}}"><p class="personName" th:text="${user.username}">Varun Jindal</p></a>
+                                        <p class="profInfo" th:utext="'<b>E-mail:</b> ' + ${user.email}">E-mail</p>
+                                    </div>
+                                    <th:block th:if="${isLogged}">
+                                        <a th:href="@{'/messages/sendMessage?recipient=' + ${user.username}}">
+                                            <button type="submit" class="btn btn-success btn-send">
+                                                SEND MESSAGE
+                                            </button>
+                                        </a>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
